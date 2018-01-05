@@ -2,10 +2,15 @@
   "name": "rapidsupdater",
   "version": "1.0.0",
   "description": "A communication app for the Rapids Bistro",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dave Hoffman",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "pug": "^2.0.0-rc.4"
+  }
 }
