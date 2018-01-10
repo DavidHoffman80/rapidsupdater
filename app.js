@@ -8,26 +8,26 @@ const MongoStore = require('connect-mongo')(session);
 
 var app = express();
 
-// Mongodb connection
-mongoose.connect('mongodb://localhost:27017/rapidsupdater', { useMongoClient: true });
+// mongodb connection
+mongoose.connect('mongodb://localhost:27017/rapidsupdater');
 var db = mongoose.connection;
-// Mongo error
+// mongo error handler
 db.on('error', console.error.bind(console, 'connection error:'));
 
 // Use sessions for tracking logins
 app.use(session({
-  secret: 'communication is key',
+  secret: 'Rapids Updater is for you',
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({
     mongooseConnection: db
-  }),
-  unset: 'destroy'
+  })
 }));
 
-// Make user ID available in PUG templates
+// Make user ID available to templates
 app.use(function(req, res, next){
-  res.locals.currentUser = req.session.userId;
+  res.locals.currentUser= req.session.userId;
+  next();
 });
 
 // parse incoming requests
@@ -45,15 +45,16 @@ app.set('views', __dirname + '/views');
 var routes = require('./routes/index');
 app.use('/', routes);
 
-// Catch 404 and forward to error handler
-app.use(function(req, res, next){
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
   var err = new Error('File Not Found');
   err.status = 404;
   next(err);
 });
 
-// Error handler
-app.use(function(err, req, res, next){
+// error handler
+// define as the last app.use callback
+app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
