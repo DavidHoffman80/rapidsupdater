@@ -7,6 +7,9 @@ nav.navbar.navbar-expand-sm.navbar-dark.fixed-top.bg-dark
       if !currentUser
         li.nav-item
           a.nav-link(href='/register') Sign Up
+      else
+        li.nav-item
+          a.nav-link(href='/profile') Profile
       li.nav-item
         a.nav-link(href='/about') About
     if currentUser
