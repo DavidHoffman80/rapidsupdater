@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .main.container-fluid
+    h1.mainHeading.display-3 #{title}
+    form(method='POST', action='/articles/edit/'+article._id)
+      #form-group.mt-2
+        label Title:
+        input.form-control(name='title', type='text', value=article.title)
+      #form-group.mt-2
+        label Body:
+        textarea.form-control(name='body')= article.body
+      input.btn.btn-primary.mt-2(type='submit', value='Submit')

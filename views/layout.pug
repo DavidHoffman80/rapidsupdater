@@ -4,18 +4,24 @@ head
   meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
   meta(http-equiv='x-ua-compatible', content='ie=edge')
   title Rapids Updater | #{title}
-  link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous")
+  link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.css')
   link(rel='stylesheet', href='/stylesheets/style.css')
   
   body
     // Load navbar.pug
     include navbar
     
+    // Messages
+    != messages('message', locals)
+    if errors
+      each error, i in errors
+        div(class="alert alert-danger messageCont") #{error.msg}
     // Load content block
     block content
     
     // Load footer.pug
     include footer
   
-    script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous")
+    script(src='/bower_components/jquery/dist/jquery.min.js')
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+    script(src='/js/main.js')

@@ -1,8 +1,10 @@
 'use strict';
 
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -18,7 +20,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 app.use(session({
   secret: 'Rapids Updater is for you',
   resave: true,
-  saveUninitialized: false,
+  saveUninitialized: true,
   store: new MongoStore({
     mongooseConnection: db
   })
@@ -36,6 +38,30 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // serve static files from /public
 app.use(express.static(__dirname + '/public'));
+
+// Express Messages Middleware
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  return next();
+});
+
+// Express Validator Middleware
+app.use(expressValidator({
+  errorFormatter: function(param, msg, value){
+    var namespace = param.split('.')
+    , root = namespace.shift()
+    , formParam = root;
+    while(namespace.length){
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return{
+      param: formParam,
+      msg: msg,
+      value: value
+    };
+  }
+}));
 
 // view engine setup
 app.set('view engine', 'pug');

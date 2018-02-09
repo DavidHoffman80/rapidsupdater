@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  .main.container-fluid
+    h1.mainHeading.display-3 #{title}
+    p.mainContent This is where you will post news that everyone needs to know
+    .list-group
+      each article, i in articles
+        a.list-group-item.list-group-item-action.border.border-primary(href="/article/"+article._id)= article.title

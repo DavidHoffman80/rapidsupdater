@@ -15,6 +15,11 @@ a:visited{
 /* Containers */
 .main{
   margin-top: 4rem;
+  margin-bottom: 3rem;
+}
+
+.messageCont:first-of-type{
+  margin-top: 4rem;
 }
 
 form{
