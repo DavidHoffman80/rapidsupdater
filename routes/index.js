@@ -19,14 +19,16 @@ router.get('/profile', mid.requiresLogin, function(req, res, next){
 });
 
 // GET /logout
-router.get('/logout', mid.requiresLogin, function(req, res, next){
+router.get('/logout', function(req, res, next){
   // if there is a session, true if you are logged in
-  if(req.session){
+  if(req.session.userId){
     // Then destroy that session
     req.session.destroy(function(err){
       if(err){
         return next(err);
       } else{
+        // clear the cookie
+        res.clearCookie('connect.sid');
         // and redirect to the home page
         return res.redirect('/');
       }
@@ -199,7 +201,12 @@ router.get('/article/edit/:id', mid.requiresLogin, function(req, res, next){
   Article.findById(req.params.id, function(err, article){
     if(err){
       return next(err);
-    } else{
+    }
+    if(article.author != req.session.userId){
+      req.flash('danger', 'Not Authorized');
+      res.redirect('/articles');
+    }
+    else{
       res.render('edit_article', {
         title: 'Edit Info',
         article: article
@@ -211,11 +218,20 @@ router.get('/article/edit/:id', mid.requiresLogin, function(req, res, next){
 // DELETE delete single article
 router.delete('/article/:id', mid.requiresLogin, function(req, res, next){
   let query = {_id:req.params.id};
-  Article.remove(query, function(err){
+  Article.findById(req.params.id, function(err, article){
     if(err){
       return next(err);
+    }
+    if(article.author != req.session.userId){
+      res.status(500).send();
     } else{
-      res.send('Success');
+      Article.remove(query, function(err){
+        if(err){
+          return next(err);
+        } else{
+          res.send('Success');
+        }
+      });
     }
   });
 });
