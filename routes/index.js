@@ -19,7 +19,8 @@ router.get('/profile', mid.requiresLogin, function(req, res, next){
 });
 
 // GET /logout
-router.get('/logout', function(req, res, next){
+router.get('/logout', mid.requiresLogin, function(req, res, next){
+  req.flash('success', 'You have been logged out!');
   // if there is a session, true if you are logged in
   if(req.session.userId){
     // Then destroy that session
