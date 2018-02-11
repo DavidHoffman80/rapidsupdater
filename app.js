@@ -21,10 +21,13 @@ app.use(session({
   secret: 'Rapids Updater is for you',
   resave: true,
   saveUninitialized: true,
+  cookie: { secure: true },
   store: new MongoStore({
     mongooseConnection: db
   })
 }));
+
+app.set('trust proxy', '127.0.0.1');
 
 // Make user ID available to templates
 app.get('*', function(req, res, next){
