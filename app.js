@@ -3,8 +3,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
-const flash = require('connect-flash');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -21,16 +19,13 @@ app.use(session({
   secret: 'Rapids Updater is for you',
   resave: true,
   saveUninitialized: true,
-  cookie: { secure: true },
   store: new MongoStore({
     mongooseConnection: db
   })
 }));
 
-app.set('trust proxy', '127.0.0.1');
-
 // Make user ID available to templates
-app.get('*', function(req, res, next){
+app.use(function(req, res, next){
   res.locals.currentUser= req.session.userId;
   next();
 });
@@ -41,30 +36,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // serve static files from /public
 app.use(express.static(__dirname + '/public'));
-
-// Express Messages Middleware
-app.use(flash());
-app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
-  return next();
-});
-
-// Express Validator Middleware
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value){
-    var namespace = param.split('.')
-    , root = namespace.shift()
-    , formParam = root;
-    while(namespace.length){
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return{
-      param: formParam,
-      msg: msg,
-      value: value
-    };
-  }
-}));
 
 // view engine setup
 app.set('view engine', 'pug');
