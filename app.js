@@ -2,6 +2,10 @@
 
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/rapidsupdater');
+let db = mongoose.connection;
 
 // Initialize App(express)
 var app = express();
