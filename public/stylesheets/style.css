@@ -1,0 +1,81 @@
+:root{
+  --mainHeading: #0763C3;
+  --mainText: rgba(255,255,255,.5);
+  --footerText: #373839;
+}
+
+body{
+  background-color: #12171C;
+}
+
+a:visited{
+  color: none;
+}
+
+/* Containers */
+.main{
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+}
+
+.messageCont:first-of-type{
+  margin-top: 4rem;
+}
+
+form{
+  margin-top: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+.footer{
+  background-color: #12171C;
+}
+
+.errordiv{
+  color: var(--mainText);
+}
+
+/* Text Colors */
+.mainHeading{
+  color: var(--mainHeading);
+}
+
+.mainContent{
+  color: var(--mainText);
+}
+
+.footerText{
+  color: var(--footerText);
+}
+
+label{
+  color: var(--mainText);
+}
+
+.profileHeading{
+  color: red;
+}
+
+/* Images */
+.hero{
+  width: 300px;
+  height: 200px;
+  margin: 1.5rem auto;
+}
+
+.avatar{
+  width: 35px;
+  border: solid 2px rgba(255,255,255, .95);
+  border-radius: 50%;
+  margin-bottom: 25px;
+}
+
+.profileName{
+  display: inline;
+  margin: 0 0 0 1rem;
+  line-height: 1;
+}
+
+.last{
+  padding-bottom: 4rem;
+}

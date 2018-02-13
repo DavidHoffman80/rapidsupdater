@@ -32,9 +32,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+// Set the public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 // GET / Home
 app.get('/', function(req, res, next){
-  return res.render('layout', {
+  return res.render('index', {
     title: 'Home'
   });
 });
