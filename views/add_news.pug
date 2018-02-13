@@ -3,10 +3,13 @@ extends layout
 block content
   .main.container-fluid
     h1.mainHeading.display-3 #{title}
-    form(method='POST', action='/articles/add')
+    form(method='POST', action='/news/add')
       #form-group.mt-2
         label Title:
         input.form-control(name='title', type='text')
+      #form-group.mt-2
+        label Author:
+        input.form-control(name='author', type='text')
       #form-group.mt-2
         label Body:
         textarea.form-control(name='body')

@@ -3,6 +3,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 mongoose.connect('mongodb://localhost/rapidsupdater');
 let db = mongoose.connection;
@@ -24,6 +25,12 @@ let Article = require('./models/articles');
 // Load view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+// Body-parser middleware
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 
 // GET / Home
 app.get('/', function(req, res, next){
@@ -56,6 +63,29 @@ app.get('/news', function(req, res, next){
         title: 'News',
         articles: articles
       });
+    }
+  });
+});
+
+// GET /news/add
+app.get('/news/add', function(req, res, next){
+  return res.render('add_news', {
+    title: 'Add News'
+  });
+});
+
+// POST /news/add
+app.post('/news/add', function(req, res, next){
+  let article = new Article();
+  article.title = req.body.title;
+  article.author = req.body.author;
+  article.body = req.body.body;
+
+  article.save(function(err){
+    if(err){
+      return next(err);
+    } else{
+      res.redirect('/news');
     }
   });
 });
