@@ -25,15 +25,39 @@ let Article = require('./models/articles');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// Home route
+// GET / Home
 app.get('/', function(req, res, next){
   return res.render('layout', {
     title: 'Home'
   });
 });
 
-app.get('/articles', function(req, res, next){
-  
+// GET /register
+app.get('/register', function(req, res, next){
+  return res.render('register', {
+    title: 'Register'
+  });
+});
+
+// GET /about
+app.get('/about', function(req, res, next){
+  return res.render('about', {
+    title: 'About'
+  });
+});
+
+// GET /News
+app.get('/news', function(req, res, next){
+  Article.find({}, function(err, articles){
+    if(err){
+      return next(err);
+    } else{
+      return res.render('news', {
+        title: 'News',
+        articles: articles
+      });
+    }
+  });
 });
 
 // catch 404 and forward to error handler
