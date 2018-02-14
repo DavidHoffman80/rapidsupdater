@@ -123,7 +123,24 @@ app.get('/news/edit/:id', function(req, res, next){
 
 // POST news edit
 app.post('/news/edit/:id', function(req, res, next){
-  Article.update();
+  let article = {};
+  article.title = req.body.title;
+  article.author = req.body.author;
+  article.body = req.body.body;
+
+  let query = {_id:req.params.id};
+  Article.update(query, article, function(err){
+    if(err){
+      return next(err);
+    }
+  });
+  Article.findById(req.params.id, function(err, article){
+    if(err){
+      return next(err);
+    } else{
+      res.redirect('/news/'+article._id);
+    }
+  });
 });
 
 // catch 404 and forward to error handler
