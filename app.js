@@ -93,6 +93,39 @@ app.post('/news/add', function(req, res, next){
   });
 });
 
+// GET single news article
+app.get('/news/:id', function(req, res, next){
+  Article.findById(req.params.id, function(err, article){
+    if(err){
+      return next(err);
+    } else{
+      return res.render('article', {
+        title: article.title,
+        article: article
+      });
+    }
+  });
+});
+
+// GET news edit
+app.get('/news/edit/:id', function(req, res, next){
+  Article.findById(req.params.id, function(err, article){
+    if(err){
+      return next(err);
+    } else{
+      return res.render('edit_news', {
+        title: 'Edit News',
+        article: article
+      });
+    }
+  });
+});
+
+// POST news edit
+app.post('/news/edit/:id', function(req, res, next){
+  Article.update();
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('File Not Found');
