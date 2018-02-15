@@ -41,9 +41,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Express-session middleware
 app.use(session({
   secret: 'rapids updater is for you',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  resave: true,
+  saveUninitialized: true
 }));
 
 // Express-messages middleware
@@ -123,6 +122,7 @@ app.post('/news/add', function(req, res, next){
     if(err){
       return next(err);
     } else{
+      req.flash('success', 'Your News has been added!');
       res.redirect('/news');
     }
   });
@@ -173,6 +173,7 @@ app.post('/news/edit/:id', function(req, res, next){
     if(err){
       return next(err);
     } else{
+      req.flash('success', 'Your News article has been updated!');
       res.redirect('/news/'+article._id);
     }
   });

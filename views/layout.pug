@@ -12,6 +12,9 @@ html
     // Load navbar.pug
     include navbar
 
+    // Flash messages
+    != messages('message', locals)
+
     // Load content block
     block content
 
