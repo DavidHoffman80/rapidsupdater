@@ -6,6 +6,5 @@ block content
     h3.mainContent Posted by: #{article.author}
     p.mainContent= article.body
     hr
-    if currentUser == article.author
-      a.btn.btn-primary.mr-2.mb-6(href='/news/edit/'+article._id) Edit
-      a.btn.btn-danger.delete-article(href='#', data-id=article._id) Delete
+    a.btn.btn-primary.mr-2.mb-6(href='/news/edit/'+article._id) Edit
+    a.btn.btn-danger.delete-article(href='#', data-id=article._id) Delete
