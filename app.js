@@ -143,6 +143,17 @@ app.post('/news/edit/:id', function(req, res, next){
   });
 });
 
+// DELETE a single article
+app.delete('/news/:id', function(req, res, next){
+  let query = {_id:req.params.id}
+  Article.remove(query, function(err){
+    if(err){
+      return next(err);
+    }
+    res.send('Success');
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('File Not Found');
