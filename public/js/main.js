@@ -6,7 +6,6 @@ $(document).ready(function(){
       type: 'DELETE',
       url: '/news/'+id,
       success: function(){
-        alert('Deleting article');
         window.location.href='/news';
       },
       error: function(err){
@@ -14,4 +13,5 @@ $(document).ready(function(){
       }
     });
   });
+  $('.alert-success').delay(3000).fadeOut('slow');
 });

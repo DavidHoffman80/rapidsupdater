@@ -2,6 +2,7 @@ extends layout
 
 block content
   .main.container-fluid
+    != messages('message', locals)
     h1.mainHeading.display-3 #{title}
     p.mainContent This is where you will post news that everyone needs to know
     .list-group

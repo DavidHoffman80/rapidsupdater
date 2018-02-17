@@ -2,6 +2,7 @@ extends layout
 
 block content
   .main.container-fluid
+    != messages('message', locals)
     h1.mainHeading.display-4= article.title
     h3.mainContent Posted by: #{article.author}
     p.mainContent= article.body

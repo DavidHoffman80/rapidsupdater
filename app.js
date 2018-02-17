@@ -113,19 +113,37 @@ app.get('/news/add', function(req, res, next){
 
 // POST /news/add
 app.post('/news/add', function(req, res, next){
-  let article = new Article();
-  article.title = req.body.title;
-  article.author = req.body.author;
-  article.body = req.body.body;
+  req.checkBody('title', 'A title is required!').notEmpty();
+  req.checkBody('author', 'An author is required!').notEmpty();
+  req.checkBody('body', 'The body is required!').notEmpty();
 
-  article.save(function(err){
-    if(err){
-      return next(err);
-    } else{
-      req.flash('success', 'Your News has been added!');
-      res.redirect('/news');
-    }
-  });
+  // Get errors
+  let errors = req.validationErrors();
+  if(errors){
+    let article = {};
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+    res.render('add_news_error', {
+      title: 'Add News',
+      article: article,
+      errors: errors
+    });
+  } else{
+    let article = new Article();
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+
+    article.save(function(err){
+      if(err){
+        return next(err);
+      } else{
+        req.flash('success', 'Your News has been added!');
+        res.redirect('/news');
+      }
+    });
+  }
 });
 
 // GET single news article
@@ -158,25 +176,43 @@ app.get('/news/edit/:id', function(req, res, next){
 
 // POST news edit
 app.post('/news/edit/:id', function(req, res, next){
-  let article = {};
-  article.title = req.body.title;
-  article.author = req.body.author;
-  article.body = req.body.body;
+  req.checkBody('title', 'A title is required!').notEmpty();
+  req.checkBody('author', 'An author is required!').notEmpty();
+  req.checkBody('body', 'The body is required!').notEmpty();
 
-  let query = {_id:req.params.id};
-  Article.update(query, article, function(err){
-    if(err){
-      return next(err);
-    }
-  });
-  Article.findById(req.params.id, function(err, article){
-    if(err){
-      return next(err);
-    } else{
-      req.flash('success', 'Your News article has been updated!');
-      res.redirect('/news/'+article._id);
-    }
-  });
+  // Get errors
+  let errors = req.validationErrors();
+  if(errors){
+    let article = {};
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+    res.render('edit_news_error', {
+      title: 'Edit News',
+      article: article,
+      errors: errors
+    });
+  } else{
+    let article = {};
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+
+    let query = {_id:req.params.id};
+    Article.update(query, article, function(err){
+      if(err){
+        return next(err);
+      }
+    });
+    Article.findById(req.params.id, function(err, article){
+      if(err){
+        return next(err);
+      } else{
+        req.flash('success', 'Your News article has been updated!');
+        res.redirect('/news/'+article._id);
+      }
+    });
+  }
 });
 
 // DELETE a single article
@@ -186,7 +222,9 @@ app.delete('/news/:id', function(req, res, next){
     if(err){
       return next(err);
     }
+    req.flash('success', 'Your News article has been deleted!');
     res.send('Success');
+    
   });
 });
 
