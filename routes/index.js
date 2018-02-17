@@ -2,6 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
+// Bring in article model
+let Article = require('../models/articles');
 
 // GET / Home
 router.get('/', function(req, res, next){
