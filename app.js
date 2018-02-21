@@ -9,6 +9,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const config = require('./config/database');
+const MongoStore = require('connect-mongo')(session);
 
 mongoose.connect(config.database);
 let db = mongoose.connection;
@@ -44,7 +45,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'rapids updater is for you',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
 }));
 
 // Express-messages middleware
