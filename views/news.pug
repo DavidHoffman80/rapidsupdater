@@ -2,9 +2,10 @@ extends layout
 
 block content
   .main.container-fluid
-    != messages('message', locals)
-    h1.mainHeading.display-3 #{title}
-    p.mainContent This is where you will post news that everyone needs to know
-    .list-group
-      each article, i in articles
-        a.list-group-item.list-group-item-action.border.border-primary(href="/news/"+article._id)= article.title
+    .col-md-6.col-md-offset-3
+      != messages('message', locals)
+      h1.mainHeading.display-3 #{title}
+      p.mainContent This is where you will post news that everyone needs to know
+      .list-group
+        each article, i in articles
+          a.list-group-item.list-group-item-action.border.border-primary(href="/news/"+article._id)= article.title

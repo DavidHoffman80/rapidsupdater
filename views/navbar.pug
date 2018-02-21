@@ -4,21 +4,21 @@ nav.navbar.navbar-expand-sm.navbar-dark.fixed-top.bg-dark
     span.navbar-toggler-icon
   #nav-bar.collapse.navbar-collapse
     ul.navbar-nav.container
-      //if !currentUser
-      li.nav-item
-        a.nav-link(href='/register') Register
-        //else
-      //- li.nav-item
-      //-   a.nav-link(href='/profile') Profile
-      li.nav-item
-        a.nav-link(href='/news') News
-      li.nav-item
-        a.nav-link(href='/news/add') Add News
+      if !user
+        li.nav-item
+          a.nav-link(href='/register') Register
+      else
+        li.nav-item
+          a.nav-link(href='/profile') Profile
+        li.nav-item
+          a.nav-link(href='/news') News
+        li.nav-item
+          a.nav-link(href='/news/add') Add News
       li.nav-item
         a.nav-link(href='/about') About
-    //- if currentUser
-    //-   .form-inline
-    //-     a.btn.btn-info(href='/logout') Logout
-    //- else
-    //-   .form-inline
-    //-     a.btn.btn-info(href='/login') Login
+    if user
+      .form-inline
+        a.btn.btn-info(href='/logout') Logout
+    else
+      .form-inline
+        a.btn.btn-info(href='/login') Login

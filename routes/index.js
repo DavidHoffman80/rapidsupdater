@@ -3,10 +3,13 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 // Bring in article model
 let Article = require('../models/articles');
 // Bring in user model
 let User = require('../models/user');
+// Authentication middleware
+let authentication = require('../authenticationMiddleware/authenticate');
 
 // GET / Home
 router.get('/', function(req, res, next){
@@ -16,14 +19,14 @@ router.get('/', function(req, res, next){
 });
 
 // GET /register
-router.get('/register', function(req, res, next){
+router.get('/register', authentication.mustBeLoggedOut, function(req, res, next){
   return res.render('register', {
     title: 'Register'
   });
 });
 
 // POST /register
-router.post('/register', function(req, res, next){
+router.post('/register', authentication.mustBeLoggedOut, function(req, res, next){
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email = req.body.email;
@@ -67,20 +70,13 @@ router.post('/register', function(req, res, next){
           if(err){
             return next(err);
           } else{
-            req.flash('success', 'You are now register');
+            req.flash('success', 'You are now registered');
             res.redirect('/login');
           }
         });
       });
     });
   }
-});
-
-// GET /login
-router.get('/login', function(req, res, next){
-  return res.render('login', {
-    title: 'Login'
-  });
 });
 
 // GET /about
@@ -90,8 +86,45 @@ router.get('/about', function(req, res, next){
   });
 });
 
+// GET /login
+router.get('/login', authentication.mustBeLoggedOut, function(req, res, next){
+  return res.render('login', {
+    title: 'Login'
+  });
+});
+
+// POST /login
+router.post('/login', authentication.mustBeLoggedOut, function(req, res, next){
+  passport.authenticate('local', {
+    successRedirect: '/news',
+    failureRedirect: '/login',
+    failureFlash: true
+  })(req, res, next);
+});
+
+// GET logout
+router.get('/logout', authentication.mustBeLoggedIn, function(req, res, next){
+  req.logout();
+  req.flash('success', 'You have been logged out.');
+  res.redirect('/login');
+});
+
+// GET /profile
+router.get('/profile', authentication.mustBeLoggedIn, function(req, res, next){
+  User.findById(req.user._id, function(err, user){
+    if(err){
+      return next(err);
+    } else{
+      return res.render('profile', {
+        name: user.firstName + ' ' + user.lastName,
+        title: 'Profile | ' + user.firstName + ' ' + user.lastName
+      });
+    }
+  });
+});
+
 // GET /News
-router.get('/news', function(req, res, next){
+router.get('/news', authentication.mustBeLoggedIn, function(req, res, next){
   Article.find({}, function(err, articles){
     if(err){
       return next(err);
@@ -105,16 +138,15 @@ router.get('/news', function(req, res, next){
 });
 
 // GET /news/add
-router.get('/news/add', function(req, res, next){
+router.get('/news/add', authentication.mustBeLoggedIn, function(req, res, next){
   return res.render('add_news', {
     title: 'Add News'
   });
 });
 
 // POST /news/add
-router.post('/news/add', function(req, res, next){
+router.post('/news/add', authentication.mustBeLoggedIn, function(req, res, next){
   req.checkBody('title', 'A title is required!').notEmpty();
-  req.checkBody('author', 'An author is required!').notEmpty();
   req.checkBody('body', 'The body is required!').notEmpty();
 
   // Get errors
@@ -122,7 +154,6 @@ router.post('/news/add', function(req, res, next){
   if(errors){
     let article = {};
     article.title = req.body.title;
-    article.author = req.body.author;
     article.body = req.body.body;
     res.render('add_news_error', {
       title: 'Add News',
@@ -132,7 +163,7 @@ router.post('/news/add', function(req, res, next){
   } else{
     let article = new Article();
     article.title = req.body.title;
-    article.author = req.body.author;
+    article.author = req.user._id;
     article.body = req.body.body;
 
     article.save(function(err){
@@ -147,24 +178,34 @@ router.post('/news/add', function(req, res, next){
 });
 
 // GET single news article
-router.get('/news/:id', function(req, res, next){
-  Article.findById(req.params.id, function(err, article){
+router.get('/news/:id', authentication.mustBeLoggedIn, function(req, res, next){
+  Article.findById(req.params.id, function(err, article){    
     if(err){
       return next(err);
     } else{
-      return res.render('article', {
-        title: article.title,
-        article: article
+      User.findById(article.author, function(err, user){
+        if(err){
+          return next(err);
+        } else{
+          return res.render('article', {
+            title: article.title,
+            article: article,
+            author: user.firstName + ' ' + user.lastName
+          });
+        }
       });
     }
   });
 });
 
 // GET news edit
-router.get('/news/edit/:id', function(req, res, next){
+router.get('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, next){
   Article.findById(req.params.id, function(err, article){
     if(err){
       return next(err);
+    } else if(article.author != req.user._id){
+      req.flash('danger', 'Not Authorized!');
+      res.redirect('/news/'+ req.params.id);
     } else{
       return res.render('edit_news', {
         title: 'Edit News',
@@ -175,7 +216,7 @@ router.get('/news/edit/:id', function(req, res, next){
 });
 
 // POST news edit
-router.post('/news/edit/:id', function(req, res, next){
+router.post('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, next){
   req.checkBody('title', 'A title is required!').notEmpty();
   req.checkBody('author', 'An author is required!').notEmpty();
   req.checkBody('body', 'The body is required!').notEmpty();
@@ -192,6 +233,9 @@ router.post('/news/edit/:id', function(req, res, next){
       article: article,
       errors: errors
     });
+  } else if(article.author != req.user._id){
+    req.flash('danger', 'Not Authorized!');
+    res.redirect('/news/'+ req.params.id);
   } else{
     let article = {};
     article.title = req.body.title;
@@ -217,14 +261,22 @@ router.post('/news/edit/:id', function(req, res, next){
 
 // DELETE a single article
 router.delete('/news/:id', function(req, res, next){
+  if(!req.user._id){
+    res.status(500).send();
+  }
   let query = {_id:req.params.id}
-  Article.remove(query, function(err){
-    if(err){
-      return next(err);
+  Article.findById(req.params.id, function(err, article){
+    if(article.author != req.user._id){
+      res.status(500).send();
+    } else{
+      Article.remove(query, function(err){
+        if(err){
+          return next(err);
+        }
+        req.flash('success', 'Your News article has been deleted!');
+        res.send('Success');        
+      });
     }
-    req.flash('success', 'Your News article has been deleted!');
-    res.send('Success');
-    
   });
 });
 

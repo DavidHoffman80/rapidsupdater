@@ -35,6 +35,12 @@ form{
   color: var(--mainText);
 }
 
+.alert-error{
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
 /* Text Colors */
 .mainHeading{
   color: var(--mainHeading);
@@ -64,10 +70,10 @@ label{
 }
 
 .avatar{
-  width: 35px;
+  width: 45px;
   border: solid 2px rgba(255,255,255, .95);
   border-radius: 50%;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .profileName{

@@ -2,8 +2,8 @@ extends layout
 
 block content
   .main.container-fluid
-    != messages('message', locals)
     .col-md-6.col-md-offset-3
+      != messages('message', locals)
       h1.mainHeading.display-3 Log In
       form(method='POST' action='/login')
         div.form-group

@@ -7,8 +7,10 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
+const passport = require('passport');
+const config = require('./config/database');
 
-mongoose.connect('mongodb://localhost/rapidsupdater');
+mongoose.connect(config.database);
 let db = mongoose.connection;
 // Check DB connection
 db.once('open', function(){
@@ -68,6 +70,18 @@ app.use(expressValidator({
     };
   }
 }));
+
+// Passport config
+require('./config/passport')(passport);
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Allow the app to have the user id
+app.use(function(req, res, next){
+  res.locals.user = req.user;
+  next();
+});
 
 // Include routes
 var routes = require('./routes/index');
