@@ -108,7 +108,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// Server started on port 3000
+// Server started on port 5000
 app.listen(5000, function(){
   console.log('Express app listening on port 5000');
 });
