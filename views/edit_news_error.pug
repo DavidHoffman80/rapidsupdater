@@ -12,9 +12,6 @@ block content
           label Title:
           input.form-control(name='title', type='text', value=article.title)
         #form-group.mt-2
-          label Author:
-          input.form-control(name='author', type='text', value=article.author)
-        #form-group.mt-2
           label Body:
           textarea.form-control(name='body')= article.body
         input.btn.btn-primary.mt-2(type='submit', value='Submit')

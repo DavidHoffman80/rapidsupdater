@@ -218,7 +218,6 @@ router.get('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, n
 // POST news edit
 router.post('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, next){
   req.checkBody('title', 'A title is required!').notEmpty();
-  req.checkBody('author', 'An author is required!').notEmpty();
   req.checkBody('body', 'The body is required!').notEmpty();
 
   // Get errors
@@ -226,34 +225,34 @@ router.post('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, 
   if(errors){
     let article = {};
     article.title = req.body.title;
-    article.author = req.body.author;
     article.body = req.body.body;
     res.render('edit_news_error', {
       title: 'Edit News',
       article: article,
       errors: errors
     });
-  } else if(article.author != req.user._id){
-    req.flash('danger', 'Not Authorized!');
-    res.redirect('/news/'+ req.params.id);
   } else{
-    let article = {};
-    article.title = req.body.title;
-    article.author = req.body.author;
-    article.body = req.body.body;
-
-    let query = {_id:req.params.id};
-    Article.update(query, article, function(err){
-      if(err){
-        return next(err);
-      }
-    });
     Article.findById(req.params.id, function(err, article){
       if(err){
         return next(err);
+      } else if(article.author == req.user._id){
+        let editedArticle = {};
+        editedArticle.title = req.body.title;
+        editedArticle.author = req.user._id;
+        editedArticle.body = req.body.body;
+
+        let query = {_id:req.params.id};
+        Article.update(query, editedArticle, function(err){
+          if(err){
+            return next(err);
+          } else{
+            req.flash('success', 'Your News article has been updated!');
+            res.redirect('/news/'+article._id);
+          }
+        });
       } else{
-        req.flash('success', 'Your News article has been updated!');
-        res.redirect('/news/'+article._id);
+        req.flash('danger', 'Not Authorized!');
+        res.redirect('/news/'+ req.params.id);
       }
     });
   }
