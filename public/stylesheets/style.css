@@ -13,13 +13,28 @@ a:visited{
 }
 
 /* Containers */
-.main{
-  margin-top: 4rem;
-  margin-bottom: 3rem;
+/* Profile Page */
+
+
+.row{
+  align-self: center;
 }
 
-.messageCont:first-of-type{
-  margin-top: 4rem;
+.profilePos{
+  display: grid;
+}
+
+.profilePos h4, .email h4{
+  margin: 0 0 0 1rem;
+  line-height: 1.5;
+}
+
+.profilePos h3, .email h3{
+  margin: 0;
+}
+
+.profileBtn{
+  color: white;
 }
 
 form{
@@ -44,6 +59,7 @@ form{
 /* Text Colors */
 .mainHeading{
   color: var(--mainHeading);
+  text-align: center;
 }
 
 .mainContent{
@@ -58,9 +74,7 @@ label{
   color: var(--mainText);
 }
 
-.profileHeading{
-  color: red;
-}
+
 
 /* Images */
 .hero{
@@ -69,19 +83,42 @@ label{
   margin: 1.5rem auto;
 }
 
-.avatar{
-  width: 45px;
-  border: solid 2px rgba(255,255,255, .95);
-  border-radius: 50%;
-  margin-bottom: 30px;
-}
-
-.profileName{
-  display: inline;
-  margin: 0 0 0 1rem;
-  line-height: 1;
-}
-
 .last{
   padding-bottom: 4rem;
+}
+
+.cncl{
+  margin: .5rem 0 0 1rem;
+}
+
+/* Profile Page */
+.main{
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+  padding: 0 1rem 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(0px, auto);
+}
+
+.avatar{
+  width: 65px;
+  border: solid 2px rgba(255,255,255, .95);
+  border-radius: 50%;
+}
+
+.avatarImg, .profileHead{  
+  justify-self: center;
+}
+
+.profileHeading, .emailHead, .phoneHead, .positionHead{
+  color: var(--mainHeading);
+}
+
+.emailHead h6, .positionHead h6, .phoneHead h6{
+  margin: 0;
+}
+
+.profileEdit{
+  margin-bottom: 1rem;
 }

@@ -1,9 +1,29 @@
 extends layout
 
 block content
-  .main.container-fluid
-    .row
-      .col-md-8.col-md-offset-2
-        img.avatar.img-circle.hidden-xs-down(src='/images/avatar.png', alt='avatar')
-        h1.display-4.profileHeading.profileName #{name}
-        
+  .main
+    != messages('message', locals)
+    .avatarImg
+      img.avatar(src='/images/avatar.png', alt='avatar')
+    .profileHead
+      h4.profileHeading #{name}
+    if user
+      .emailHead
+        h6 E-mail
+      .email
+        h6.mainContent=user.email
+    if profile
+      if profile.phone
+        .phoneHead
+          h6 Phone
+        .phone
+          h6.mainContent=profile.phone
+      if profile.position
+        .positionHead
+          h6 Position
+        .position
+          h6.mainContent=profile.position
+    .profileEdit
+      a.btn.btn-primary.profileBtn(href='/profile/edit') Edit Profile
+    .profileEdit
+      a.btn.btn-primary.profileBtn(href='/profile/edit/image') Edit Profile Image

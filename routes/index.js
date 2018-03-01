@@ -8,6 +8,8 @@ const passport = require('passport');
 let Article = require('../models/articles');
 // Bring in user model
 let User = require('../models/user');
+// Bring in profile model
+let Profile = require('../models/profile');
 // Authentication middleware
 let authentication = require('../authenticationMiddleware/authenticate');
 
@@ -115,11 +117,128 @@ router.get('/profile', authentication.mustBeLoggedIn, function(req, res, next){
     if(err){
       return next(err);
     } else{
-      return res.render('profile', {
-        name: user.firstName + ' ' + user.lastName,
-        title: 'Profile | ' + user.firstName + ' ' + user.lastName
+      let query = {author:req.user._id};
+      Profile.findOne(query, function(err, profile){
+        return res.render('profile', {
+          name: user.firstName + ' ' + user.lastName,
+          title: 'Profile | ' + user.firstName + ' ' + user.lastName,
+          profile: profile
+        });
       });
     }
+  });
+});
+
+// GET /profile/edit
+router.get('/profile/edit', authentication.mustBeLoggedIn, function(req, res, next){
+  User.findById(req.user._id, function(err, user){
+    if(err){
+      return next(err);
+    } else{
+      let query = {author:req.user._id};
+      Profile.findOne(query, function(err, profile){
+        if(err){
+          return next(err);
+        }
+        if(profile){    
+          return res.render('edit_profile', {
+            title: 'Edit Profile',
+            user: user,
+            profile: profile
+          });
+        } else{
+          return res.render('edit_profile_no_info',{
+            title: 'Edit Profile',
+            user: user
+          });
+        }
+      });
+    }
+  });
+});
+
+// POST /profile/edit
+router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, next){
+  const email = req.body.email;
+
+  req.checkBody('email', 'Your e-mail is required!').notEmpty();
+  req.checkBody('email', 'Please provide a valid e-mail!').isEmail();
+
+  let errors = req.validationErrors();
+
+  if(errors){
+    User.findById(req.user._id, function(err, user){
+      if(err){
+        return next(err);
+      } else{
+        let query = {author:req.user._id};
+        Profile.findOne(query, function(err, profile){
+          if(err){
+            return next(err);
+          }
+          if(profile){
+            res.render('edit_profile_error_info', {
+              title: 'Edit Profile',
+              user: user,
+              errors: errors
+            });
+          } else{
+            res.render('edit_profile_error_no_info', {
+              title: 'Edit Profile',
+              user: user,
+              errors: errors
+            });
+          }
+        });
+      }
+    });
+  } else{
+    User.findById(req.user._id, function(err, user){
+      let userQuery = {_id:req.user._id};
+      let userUpdate = {};
+      userUpdate.email = req.body.email;
+      User.update(userQuery, userUpdate, function(err){
+        if(err){
+          return next(err);
+        }
+      });
+      let profileQuery = {author:req.user._id};
+      Profile.findOne(profileQuery, function(err, profile){
+        if(profile){
+          let profile = {};
+          profile.phone = req.body.phone;
+          profile.position = req.body.position;
+          Profile.update(profileQuery, profile, function(err){
+            if(err){
+              return next(err);
+            } else{
+              req.flash('success', 'Your profile has been updated!');
+              res.redirect('/profile');
+            }
+          });
+        } else{
+          let profile = new Profile();
+          profile.phone = req.body.phone;
+          profile.position = req.body.position;
+          profile.author = req.user._id;
+        
+          profile.save(function(err){
+            if(err){
+              return next(err);
+            } else{
+              req.flash('success', 'Your profile has been updated!');
+              res.redirect('/profile');
+            }
+          });
+        }
+      });
+    });
+  }
+});
+
+router.get('/profile/edit/image', authentication.mustBeLoggedIn, function(req, res, next){
+  return res.render('editProfileImage', {
+    title: 'Profile Image'
   });
 });
 

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  .main
+    .row1
+      h1.mainHeading.display-3 #{title}
+      form(method='POST', action='/profile/edit/image')
+        #form-group.mt-2
+          label Edit Profile Image:
+          input.form-control(name='profileImage', type='file')
+        input.btn.btn-primary.mt-2(type='submit', value='Submit')
+        a.btn.btn-danger.cncl(href='/profile') Cancel

@@ -10,6 +10,7 @@ const session = require('express-session');
 const passport = require('passport');
 const config = require('./config/database');
 const MongoStore = require('connect-mongo')(session);
+const multer = require('multer');
 
 mongoose.connect(config.database);
 let db = mongoose.connection;
@@ -108,7 +109,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// Server started on port 5000
-app.listen(5000, function(){
-  console.log('Express app listening on port 5000');
+// Server started on port 3000
+app.listen(3000, function(){
+  console.log('Express app listening on port 3000');
 });
