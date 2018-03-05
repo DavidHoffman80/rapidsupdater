@@ -3,10 +3,13 @@ extends layout
 block content
   .main
     != messages('message', locals)
-    .avatarImg
-      img.avatar(src='/images/avatar.png', alt='avatar')
     .profileHead
       h4.profileHeading #{name}
+    .avatarImg
+      if profile.profileImageName
+        img.avatar(src=profile.profileImageName, alt='avatar')
+      else
+        img.avatar(src='/images/avatar.png', alt='avatar')
     if user
       .emailHead
         h6 E-mail

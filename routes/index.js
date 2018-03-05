@@ -2,8 +2,41 @@
 
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+
+const multer = require('multer');
+// Set Multer Storage Engine
+const storage = multer.diskStorage({
+  destination: './public/uploads/',
+  filename: function(req, file, cb){
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+// Initialize Multer Upload
+const upload = multer({
+  storage: storage,
+  limits: {fileSize: 5256438},
+  fileFilter: function(req, file, cb){
+    checkFileType(file, cb);
+  }
+}).single('profileImage');
+// Check File Type
+function checkFileType(file, cb){
+  // Allowed ext types
+  const filetypes = /jpeg|jpg|png|gif/;
+  // Check the ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime type
+  const mimetype = filetypes.test(file.mimetype);
+  if(mimetype && extname){
+    return cb(null, true);
+  } else{
+    cb('Error: Images Only!');
+  }
+}
+
 // Bring in article model
 let Article = require('../models/articles');
 // Bring in user model
@@ -119,11 +152,15 @@ router.get('/profile', authentication.mustBeLoggedIn, function(req, res, next){
     } else{
       let query = {author:req.user._id};
       Profile.findOne(query, function(err, profile){
-        return res.render('profile', {
-          name: user.firstName + ' ' + user.lastName,
-          title: 'Profile | ' + user.firstName + ' ' + user.lastName,
-          profile: profile
-        });
+        if(err){
+          return next(err);
+        } else{
+          return res.render('profile', {
+            name: user.firstName + ' ' + user.lastName,
+            title: 'Profile | ' + user.firstName + ' ' + user.lastName,
+            profile: profile
+          });
+        }
       });
     }
   });
@@ -177,13 +214,13 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
             return next(err);
           }
           if(profile){
-            res.render('edit_profile_error_info', {
+            return res.render('edit_profile_error_info', {
               title: 'Edit Profile',
               user: user,
               errors: errors
             });
           } else{
-            res.render('edit_profile_error_no_info', {
+            return res.render('edit_profile_error_no_info', {
               title: 'Edit Profile',
               user: user,
               errors: errors
@@ -204,7 +241,9 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
       });
       let profileQuery = {author:req.user._id};
       Profile.findOne(profileQuery, function(err, profile){
-        if(profile){
+        if(err){
+          return next(err);
+        } else if(profile){
           let profile = {};
           profile.phone = req.body.phone;
           profile.position = req.body.position;
@@ -213,7 +252,7 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
               return next(err);
             } else{
               req.flash('success', 'Your profile has been updated!');
-              res.redirect('/profile');
+              return res.redirect('/profile');
             }
           });
         } else{
@@ -227,7 +266,7 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
               return next(err);
             } else{
               req.flash('success', 'Your profile has been updated!');
-              res.redirect('/profile');
+              return res.redirect('/profile');
             }
           });
         }
@@ -236,9 +275,60 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
   }
 });
 
+// GET /profile/edit/image
 router.get('/profile/edit/image', authentication.mustBeLoggedIn, function(req, res, next){
   return res.render('editProfileImage', {
     title: 'Profile Image'
+  });
+});
+
+// POST /profile/edit/image
+router.post('/profile/edit/image', authentication.mustBeLoggedIn, function(req, res, next){
+  upload(req, res, function(err){
+    if(err){
+      return res.render('editProfileImage', {
+        title: 'Profile Image',
+        errors: err
+      });
+    } else{
+      if(req.file == undefined){
+        return res.render('editProfileImage', {
+          title: 'Profile Image',
+          errors: 'Error: No file selected!'
+        });
+      } else{
+        let profileQuery = {author:req.user._id};
+        Profile.findOne(profileQuery, function(err, profile){
+          if(err){
+            return next(err);
+          } else if(profile){
+            let profile = {};
+            profile.profileImageName = '/uploads/' + req.file.filename;
+            Profile.update(profileQuery, profile, function(err){
+              if(err){
+                return next(err);
+              } else{
+                req.flash('success', 'Your profile image has been uploaded!');
+                return res.redirect('/profile');
+              }
+            });
+          } else{
+            let profile = new Profile();
+            profile.profileImageName = '/uploads/' + req.file.filename;
+            profile.author = req.user._id;
+
+            profile.save(function(err){
+              if(err){
+                return next(err);
+              } else{
+                req.flash('success', 'Your profile image has been uploaded!');
+                return res.redirect('/profile');
+              }
+            });
+          }
+        });
+      }
+    }
   });
 });
 

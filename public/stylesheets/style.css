@@ -1,9 +1,24 @@
+/* color and font variables */
 :root{
-  --mainHeading: #0763C3;
-  --mainText: rgba(255,255,255,.5);
-  --footerText: #373839;
+  --mainHeadingColor: #0763C3;
+  --mainTextColor: rgba(255,255,255,.5);
+  --footerTextColor: #373839;
+  --mainHeadingFont: 'Montserrat', sans-serif;
+  --mainTextFont: 'Lato', sans-serif;
 }
 
+/* Resets */
+h1, h2, h3, h4, h5, h6{
+  margin: 0;
+  padding: 0;
+}
+
+p{
+  margin: 0;
+  padding: 0;
+}
+
+/* General page setup */
 body{
   background-color: #12171C;
 }
@@ -12,8 +27,54 @@ a:visited{
   color: none;
 }
 
-/* Containers */
+.main{
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+  padding: 0 1rem 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(0px, auto);
+}
+
 /* Profile Page */
+.profileHead{
+  margin-bottom: .75rem;
+}
+
+.profileHeading{
+  font-family: var(--mainHeadingFont);
+}
+
+.avatar{
+  width: 65px;
+  height: 65px;
+  border: solid 2px rgba(255,255,255, .95);
+  border-radius: 50%;
+}
+
+.avatarImg, .profileHead{  
+  justify-self: center;
+}
+
+.profileHeading, .emailHead, .phoneHead, .positionHead{
+  color: var(--mainHeadingColor);
+}
+
+.email h6, .phone h6, .position h6{
+  font-family: var(--mainTextFont);
+}
+
+.emailHead h6, .positionHead h6, .phoneHead h6{
+  margin: .75rem 0 0 0;
+  font-family: var(--mainHeadingFont);
+}
+
+.profileEdit{
+  margin: 1rem 0 .5rem 0;
+}
+
+
+
 
 
 .row{
@@ -47,7 +108,7 @@ form{
 }
 
 .errordiv{
-  color: var(--mainText);
+  color: var(--mainTextColor);
 }
 
 .alert-error{
@@ -58,20 +119,20 @@ form{
 
 /* Text Colors */
 .mainHeading{
-  color: var(--mainHeading);
+  color: var(--mainHeadingColor);
   text-align: center;
 }
 
 .mainContent{
-  color: var(--mainText);
+  color: var(--mainTextColor);
 }
 
 .footerText{
-  color: var(--footerText);
+  color: var(--footerTextColor);
 }
 
 label{
-  color: var(--mainText);
+  color: var(--mainTextColor);
 }
 
 
@@ -91,34 +152,3 @@ label{
   margin: .5rem 0 0 1rem;
 }
 
-/* Profile Page */
-.main{
-  margin-top: 4rem;
-  margin-bottom: 3rem;
-  padding: 0 1rem 0 1rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-auto-rows: minmax(0px, auto);
-}
-
-.avatar{
-  width: 65px;
-  border: solid 2px rgba(255,255,255, .95);
-  border-radius: 50%;
-}
-
-.avatarImg, .profileHead{  
-  justify-self: center;
-}
-
-.profileHeading, .emailHead, .phoneHead, .positionHead{
-  color: var(--mainHeading);
-}
-
-.emailHead h6, .positionHead h6, .phoneHead h6{
-  margin: 0;
-}
-
-.profileEdit{
-  margin-bottom: 1rem;
-}
