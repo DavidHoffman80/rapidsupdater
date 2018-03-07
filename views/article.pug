@@ -1,13 +1,24 @@
 extends layout
 
 block content
-  .main.container-fluid
-    .col-md-6.col-md-offset-3
-      != messages('message', locals)
-      h1.mainHeading.display-4= article.title
-      h3.mainContent Posted by: #{author}
+  .main
+    != messages('message', locals)
+    .mainHeading
+      h2= article.title
+    .timestamp.mainContent
+      h6= article.timestamp
+    .mainInfo
       p.mainContent= article.body
-      hr
-      if user.id == article.author
-        a.btn.btn-primary.mr-2.mb-6(href='/news/edit/'+article._id) Edit
-        a.btn.btn-danger.delete-article(href='#', data-id=article._id) Delete
+    .author.mainContent
+      if profile != mull
+        if profile.profileImageName !== undefined
+          img.authorAvatar(src=profile.profileImageName, alt='avatar')
+        else
+          img.authorAvatar(src='/images/avatar.png', alt='avatar')
+      else
+        img.authorAvatar(src='/images/avatar.png', alt='avatar')
+      h5 #{author}
+    if user.id == article.author
+      .buttonCont
+        a.btn.btn-primary(href='/news/edit/'+article._id) Edit
+        a.btn.btn-danger.cncl.delete-article(href='#', data-id=article._id) Delete

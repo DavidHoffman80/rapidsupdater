@@ -1,4 +1,4 @@
-/* color and font variables */
+/********** color and font variables **********/
 :root{
   --mainHeadingColor: #0763C3;
   --mainTextColor: rgba(255,255,255,.5);
@@ -7,7 +7,7 @@
   --mainTextFont: 'Lato', sans-serif;
 }
 
-/* Resets */
+/********** Resets **********/
 h1, h2, h3, h4, h5, h6{
   margin: 0;
   padding: 0;
@@ -18,7 +18,7 @@ p{
   padding: 0;
 }
 
-/* General page setup */
+/********** General page setup **********/
 body{
   background-color: #12171C;
 }
@@ -27,16 +27,79 @@ a:visited{
   color: none;
 }
 
+.mainHeading{
+  color: var(--mainHeadingColor);
+  font-family: var(--mainHeadingFont);
+}
+
+.mainContent{
+  color: var(--mainTextColor);
+  font-family: var(--mainTextFont);
+}
+
+form{
+  margin-top: 1.5rem;
+  padding-bottom: 3rem;
+  max-width: 350px;
+  font-family: var(--mainTextFont);
+  color: var(--mainTextColor);
+}
+
+.form-group:last-of-type{
+  margin-bottom: 0;
+}
+
+.btn-primary{
+  margin-top: 1rem;
+}
+
+.cncl{
+  margin: 1rem 0 0 1rem;
+}
+
+.messageCont{
+  max-width: 350px;
+}
+
+/********** Grid/Page setup **********/
 .main{
-  margin-top: 4rem;
-  margin-bottom: 3rem;
-  padding: 0 1rem 0 1rem;
+  padding: 4rem 1rem 3rem 1rem;
   display: grid;
   grid-template-columns: 1fr;
   grid-auto-rows: minmax(0px, auto);
 }
 
-/* Profile Page */
+.footerMain{
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(0px, auto);
+  padding: 0 1rem 0 1rem;
+}
+
+/********** Index Page **********/
+.hero{
+  width: 100%;
+  max-width: 450px;
+  margin: 1.5rem auto;
+}
+
+/********** Register Page **********/
+
+
+
+/********** About Page **********/
+
+.mainInfo{
+  margin-top: .5rem;
+}
+
+.mainInfo p{
+  margin-bottom: .5rem;
+}
+
+/********** Login Page **********/
+
+/********** Profile Page **********/
 .profileHead{
   margin-bottom: .75rem;
 }
@@ -69,43 +132,71 @@ a:visited{
   font-family: var(--mainHeadingFont);
 }
 
-.profileEdit{
-  margin: 1rem 0 .5rem 0;
+.position{
+  margin-bottom: 1rem;
 }
 
+/********** Edit Profile Page **********/
 
 
 
-
-.row{
-  align-self: center;
+/********** News Page **********/
+.list-group{
+  margin-top: 1rem;
 }
 
-.profilePos{
+.buttonCont{
+  margin-top: 1rem;
+}
+
+/********** Article Page **********/
+.author{
+  margin-top: 1rem;
   display: grid;
+  grid-template-columns: 45px 1fr;
+  grid-auto-rows: minmax(0px, auto);
 }
 
-.profilePos h4, .email h4{
-  margin: 0 0 0 1rem;
-  line-height: 1.5;
+.author h5{
+  margin-left: 1rem;
+  align-self: start;
 }
 
-.profilePos h3, .email h3{
-  margin: 0;
+.timestamp{
+  margin-top: .5rem;
 }
 
-.profileBtn{
-  color: white;
+.authorAvatar{
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
-form{
-  margin-top: 1.5rem;
-  padding-bottom: 4rem;
+/********** Add News Page **********/
+.addNewsHeading{
+  color: var(--mainHeadingColor);
+  font-family: var(--mainHeadingFont);
+}
+
+/********** Footer **********/
+.footerMain{
+  background-color: #12171C;
 }
 
 .footer{
-  background-color: #12171C;
+  text-align: center;
+  color: var(--footerTextColor);
+  font-family: var(--mainTextFont);
 }
+
+
+
+
+
+
+
+
+
 
 .errordiv{
   color: var(--mainTextColor);
@@ -116,39 +207,3 @@ form{
   background-color: #f8d7da;
   border-color: #f5c6cb;
 }
-
-/* Text Colors */
-.mainHeading{
-  color: var(--mainHeadingColor);
-  text-align: center;
-}
-
-.mainContent{
-  color: var(--mainTextColor);
-}
-
-.footerText{
-  color: var(--footerTextColor);
-}
-
-label{
-  color: var(--mainTextColor);
-}
-
-
-
-/* Images */
-.hero{
-  width: 300px;
-  height: 200px;
-  margin: 1.5rem auto;
-}
-
-.last{
-  padding-bottom: 4rem;
-}
-
-.cncl{
-  margin: .5rem 0 0 1rem;
-}
-

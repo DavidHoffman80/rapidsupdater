@@ -2,17 +2,28 @@ extends layout
 
 block content
   .main
-    .row1
-      h1.mainHeading.display-3 #{title}
-      form(method='POST', action='/profile/edit')
-        #form-group.mt-2
-          label New email (this will change your login name as well!):
-          input.form-control(name='email', type='text', value=user.email)
-        #form-group.mt-2
-          label Phone:
-          input.form-control(name='phone', type='text', value=profile.phone)
-        #form-group.mt-2
-          label Position:
-          input.form-control(name='position', type='text', value=profile.position)
-        input.btn.btn-primary.mt-2(type='submit', value='Submit')
-        a.btn.btn-danger.cncl(href='/profile') Cancel
+    if errors
+        each error, i in errors
+          .alert.alert-danger.messageCont #{error.msg}
+    .mainHeading
+      h2 #{title}
+    form(method='POST', action='/profile/edit')
+      #form-group
+        label New email (this will change your login name as well!):
+        input.form-control(name='email', type='text', value=user.email)
+      #form-group
+        label Phone:
+        if profile != null
+          if profile.phone !== undefined
+            input.form-control(name='phone', type='text', value=profile.phone)
+          else
+            input.form-control(name='phone', type='text')
+      #form-group
+        label Position:
+        if profile != null
+          if profile.position !== undefined
+            input.form-control(name='position', type='text', value=profile.position)
+          else
+            input.form-control(name='position', type='text')
+      input.btn.btn-primary(type='submit', value='Submit')
+      a.btn.btn-danger.cncl(href='/profile') Cancel

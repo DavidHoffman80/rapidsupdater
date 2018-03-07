@@ -82,7 +82,7 @@ router.post('/register', authentication.mustBeLoggedOut, function(req, res, next
     registrant.firstName = firstName;
     registrant.lastName = lastName;
     registrant.email = email;
-    res.render('register_error', {
+    res.render('register', {
       title: 'Register',
       registrant: registrant,
       errors: errors
@@ -176,17 +176,11 @@ router.get('/profile/edit', authentication.mustBeLoggedIn, function(req, res, ne
       Profile.findOne(query, function(err, profile){
         if(err){
           return next(err);
-        }
-        if(profile){    
+        } else{    
           return res.render('edit_profile', {
             title: 'Edit Profile',
             user: user,
             profile: profile
-          });
-        } else{
-          return res.render('edit_profile_no_info',{
-            title: 'Edit Profile',
-            user: user
           });
         }
       });
@@ -204,30 +198,16 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
   let errors = req.validationErrors();
 
   if(errors){
-    User.findById(req.user._id, function(err, user){
-      if(err){
-        return next(err);
-      } else{
-        let query = {author:req.user._id};
-        Profile.findOne(query, function(err, profile){
-          if(err){
-            return next(err);
-          }
-          if(profile){
-            return res.render('edit_profile_error_info', {
-              title: 'Edit Profile',
-              user: user,
-              errors: errors
-            });
-          } else{
-            return res.render('edit_profile_error_no_info', {
-              title: 'Edit Profile',
-              user: user,
-              errors: errors
-            });
-          }
-        });
-      }
+    let user = {};
+    let profile = {};
+    user.email = req.body.email;
+    profile.phone = req.body.phone;
+    profile.position = req.body.position;
+    return res.render('edit_profile', {
+      title: 'Edit Profile',
+      user: user,
+      profile: profile,
+      errors: errors
     });
   } else{
     User.findById(req.user._id, function(err, user){
@@ -364,7 +344,7 @@ router.post('/news/add', authentication.mustBeLoggedIn, function(req, res, next)
     let article = {};
     article.title = req.body.title;
     article.body = req.body.body;
-    res.render('add_news_error', {
+    res.render('add_news', {
       title: 'Add News',
       article: article,
       errors: errors
@@ -374,6 +354,7 @@ router.post('/news/add', authentication.mustBeLoggedIn, function(req, res, next)
     article.title = req.body.title;
     article.author = req.user._id;
     article.body = req.body.body;
+    article.timestamp = new Date().toDateString();
 
     article.save(function(err){
       if(err){
@@ -396,10 +377,18 @@ router.get('/news/:id', authentication.mustBeLoggedIn, function(req, res, next){
         if(err){
           return next(err);
         } else{
-          return res.render('article', {
-            title: article.title,
-            article: article,
-            author: user.firstName + ' ' + user.lastName
+          let query = {author:user._id};
+          Profile.findOne(query, function(err, profile){
+            if(err){
+              return next(err);
+            } else{
+              return res.render('article', {
+                title: article.title,
+                article: article,
+                profile: profile,
+                author: user.firstName + ' ' + user.lastName
+              });
+            }
           });
         }
       });
@@ -435,7 +424,7 @@ router.post('/news/edit/:id', authentication.mustBeLoggedIn, function(req, res, 
     let article = {};
     article.title = req.body.title;
     article.body = req.body.body;
-    res.render('edit_news_error', {
+    res.render('edit_news', {
       title: 'Edit News',
       article: article,
       errors: errors
@@ -481,7 +470,7 @@ router.delete('/news/:id', function(req, res, next){
         if(err){
           return next(err);
         }
-        req.flash('success', 'Your News article has been deleted!');
+        req.flash('danger', 'Your News article has been deleted!');
         res.send('Success');        
       });
     }

@@ -1,26 +1,46 @@
 extends layout
 
 block content
-  .main.container-fluid
-    .col-md-6.col-md-offset-3
-      != messages('message', locals)    
-      h1.mainHeading.display-3 Register    
-      //Register form
-      form(method='POST' action='/register')
-        div.form-group
+  .main
+    != messages('message', locals)
+    if errors
+      each error, i in errors
+        .alert.alert-danger.messageCont #{error.msg}
+    .mainHeading
+      h2 Register
+    //Register form
+    form(method='POST' action='/register')
+      if registrant
+        .form-group
+          label(for='firstName') First Name:
+          input#firstname.form-control(type='text', placeholder='First Name' name='firstName', value=registrant.firstName)
+        .form-group
+          label(for='lastName') Last Name:
+          input#lastname.form-control(type='text', placeholder='Last Name' name='lastName', value=registrant.lastName)
+        .form-group
+          label(for='email') E-mail:
+          input#email.form-control(type='text', placeholder='name@email.com' name='email', value=registrant.email)
+        .form-group
+          label(for='pw') Password:
+          input#pw.form-control(type='password', name='password')
+        .form-group
+          label(for='firstName') Confirm Password:
+          input#pw2.form-control(type='password', name='confirmPassword')
+        button.btn.btn-primary(type='submit') Sign up
+      else
+        .form-group
           label(for='firstName') First Name:
           input#firstName.form-control(type='text', placeholder='First Name' name='firstName')
-        div.form-group
+        .form-group
           label(for='lastName') Last Name:
           input#lastName.form-control(type='text', placeholder='Last Name' name='lastName')
-        div.form-group
+        .form-group
           label(for='email') E-mail:
           input#email.form-control(type='text', placeholder='name@email.com' name='email')
-        div.form-group
+        .form-group
           label(for='password') Password:
           input#pw.form-control(type='password', name='password')
-        div.form-group
+        .form-group
           label(for='confirmPassword') Confirm Password:
           input#pw2.form-control(type='password', name='confirmPassword')
         button.btn.btn-primary(type='submit') Sign up
-          

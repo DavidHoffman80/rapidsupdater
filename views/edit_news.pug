@@ -1,14 +1,17 @@
 extends layout
 
 block content
-  .main.container-fluid
-    .col-md-6.col-md-offset-3
-      h1.mainHeading.display-3 #{title}
-      form(method='POST', action='/news/edit/'+article._id)
-        #form-group.mt-2
-          label Title:
-          input.form-control(name='title', type='text', value=article.title)
-        #form-group.mt-2
-          label Body:
-          textarea.form-control(name='body')= article.body
-        input.btn.btn-primary.mt-2(type='submit', value='Submit')
+  .main
+    if errors
+        each error, i in errors
+          .alert.alert-danger.messageCont #{error.msg}
+    .mainHeading
+      h2 #{title}
+    form(method='POST', action='/news/edit/'+article._id)
+      #form-group
+        label Title:
+        input.form-control(name='title', type='text', value=article.title)
+      #form-group
+        label Body:
+        textarea.form-control(name='body')= article.body
+      input.btn.btn-primary(type='submit', value='Submit')

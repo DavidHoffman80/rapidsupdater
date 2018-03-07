@@ -1,11 +1,12 @@
 extends layout
 
 block content
-  .main.container-fluid
-    .col-md-6.col-md-offset-3
-      != messages('message', locals)
-      h1.mainHeading.display-3 #{title}
+  .main
+    != messages('message', locals)
+    .mainHeading
+      h2 #{title}
+    .mainInfo
       p.mainContent This is where you will post news that everyone needs to know
-      .list-group
-        each article, i in articles
-          a.list-group-item.list-group-item-action.border.border-primary(href="/news/"+article._id)= article.title
+    .list-group
+      each article, i in articles
+        a.list-group-item.list-group-item-action.border.border-primary(href="/news/"+article._id)= article.title

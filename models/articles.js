@@ -15,6 +15,10 @@ let articleSchema = mongoose.Schema({
   body:{
     type: String,
     required: true
+  },
+  timestamp:{
+    type: String,
+    required: true
   }
 });
 
