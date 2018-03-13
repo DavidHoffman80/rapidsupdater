@@ -40,7 +40,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Set the public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('./public'));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 // Express-session middleware
 app.use(session({

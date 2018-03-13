@@ -5,6 +5,7 @@ const router = express.Router();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const bodyParser = require('body-parser');
 
 const multer = require('multer');
 // Set Multer Storage Engine
@@ -21,7 +22,7 @@ const upload = multer({
   fileFilter: function(req, file, cb){
     checkFileType(file, cb);
   }
-}).single('profileImage');
+});
 // Check File Type
 function checkFileType(file, cb){
   // Allowed ext types
@@ -94,7 +95,6 @@ router.post('/register', authentication.mustBeLoggedOut, function(req, res, next
       email: email,
       password: password
     });
-
     bcrypt.genSalt(10, function(err, salt){
       bcrypt.hash(newUser.password, salt, function(err, hash){
         if(err){
@@ -106,7 +106,7 @@ router.post('/register', authentication.mustBeLoggedOut, function(req, res, next
             return next(err);
           } else{
             req.flash('success', 'You are now registered');
-            res.redirect('/login');
+            return res.redirect('/login');
           }
         });
       });
@@ -158,6 +158,7 @@ router.get('/profile', authentication.mustBeLoggedIn, function(req, res, next){
           return res.render('profile', {
             name: user.firstName + ' ' + user.lastName,
             title: 'Profile | ' + user.firstName + ' ' + user.lastName,
+            user: user,
             profile: profile
           });
         }
@@ -170,13 +171,12 @@ router.get('/profile', authentication.mustBeLoggedIn, function(req, res, next){
 router.get('/profile/edit', authentication.mustBeLoggedIn, function(req, res, next){
   User.findById(req.user._id, function(err, user){
     if(err){
-      return next(err);
     } else{
       let query = {author:req.user._id};
       Profile.findOne(query, function(err, profile){
         if(err){
           return next(err);
-        } else{    
+        } else{
           return res.render('edit_profile', {
             title: 'Edit Profile',
             user: user,
@@ -190,40 +190,47 @@ router.get('/profile/edit', authentication.mustBeLoggedIn, function(req, res, ne
 
 // POST /profile/edit
 router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, next){
-  const email = req.body.email;
-
-  req.checkBody('email', 'Your e-mail is required!').notEmpty();
-  req.checkBody('email', 'Please provide a valid e-mail!').isEmail();
-
-  let errors = req.validationErrors();
-
-  if(errors){
-    let user = {};
-    let profile = {};
-    user.email = req.body.email;
-    profile.phone = req.body.phone;
-    profile.position = req.body.position;
-    return res.render('edit_profile', {
-      title: 'Edit Profile',
-      user: user,
-      profile: profile,
-      errors: errors
-    });
-  } else{
-    User.findById(req.user._id, function(err, user){
-      let userQuery = {_id:req.user._id};
-      let userUpdate = {};
-      userUpdate.email = req.body.email;
-      User.update(userQuery, userUpdate, function(err){
-        if(err){
-          return next(err);
-        }
+  var upload2 = upload.single('profileImage');
+  upload2(req, res, function(err){
+    const email = req.body.email;
+    const phone = req.body.phone;
+    req.checkBody('email', 'Your e-mail is required!').notEmpty();
+    req.checkBody('email', 'Please provide a valid e-mail!').isEmail();
+    let errors = req.validationErrors();
+    if(errors){
+      let user = {};
+      let profile = {};
+      user.email = req.body.email;
+      profile.phone = req.body.phone;
+      profile.position = req.body.position;
+      return res.render('edit_profile', {
+        title: 'Edit Profile',
+        profile: profile,
+        user: user,
+        errors: errors
       });
+    // There is no image to upload
+    } else if(req.file == undefined){
+      // Update the user
+      User.findById(req.user._id, function(err, user){
+        let userQuery = {_id:req.user._id};
+        let userUpdate = {};
+        userUpdate.email = req.body.email;
+        User.update(userQuery, userUpdate, function(err){
+          if(err){
+            return next(err);
+          }
+        });
+      });
+      // Update the profile if there is one
+      // If there isn't a profile create a new profile
       let profileQuery = {author:req.user._id};
       Profile.findOne(profileQuery, function(err, profile){
         if(err){
           return next(err);
+        //There is a profile
         } else if(profile){
+          let profileQuery = {author:req.user._id};
           let profile = {};
           profile.phone = req.body.phone;
           profile.position = req.body.position;
@@ -235,12 +242,12 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
               return res.redirect('/profile');
             }
           });
+        // There is not profile, so create a profile
         } else{
           let profile = new Profile();
           profile.phone = req.body.phone;
           profile.position = req.body.position;
           profile.author = req.user._id;
-        
           profile.save(function(err){
             if(err){
               return next(err);
@@ -251,66 +258,57 @@ router.post('/profile/edit', authentication.mustBeLoggedIn, function(req, res, n
           });
         }
       });
-    });
-  }
-});
-
-// GET /profile/edit/image
-router.get('/profile/edit/image', authentication.mustBeLoggedIn, function(req, res, next){
-  return res.render('editProfileImage', {
-    title: 'Profile Image'
-  });
-});
-
-// POST /profile/edit/image
-router.post('/profile/edit/image', authentication.mustBeLoggedIn, function(req, res, next){
-  upload(req, res, function(err){
-    if(err){
-      return res.render('editProfileImage', {
-        title: 'Profile Image',
-        errors: err
-      });
+    // There is an image file to upload
     } else{
-      if(req.file == undefined){
-        return res.render('editProfileImage', {
-          title: 'Profile Image',
-          errors: 'Error: No file selected!'
-        });
-      } else{
-        let profileQuery = {author:req.user._id};
-        Profile.findOne(profileQuery, function(err, profile){
-          if(err){
-            return next(err);
-          } else if(profile){
-            let profile = {};
-            profile.profileImageName = '/uploads/' + req.file.filename;
-            Profile.update(profileQuery, profile, function(err){
-              if(err){
-                return next(err);
-              } else{
-                req.flash('success', 'Your profile image has been uploaded!');
-                return res.redirect('/profile');
-              }
-            });
-          } else{
-            let profile = new Profile();
-            profile.profileImageName = '/uploads/' + req.file.filename;
-            profile.author = req.user._id;
-
-            profile.save(function(err){
-              if(err){
-                return next(err);
-              } else{
-                req.flash('success', 'Your profile image has been uploaded!');
-                return res.redirect('/profile');
-              }
-            });
-          }
-        });
-      }
+      // Update the user
+      let user = {};
+      user.email = req.body.email;
+      let userQuery = {_id:req.user._id};
+      User.update(userQuery, user, function(err){
+        if(err){
+          return next(err);
+        }
+      });
+      // Update the profile if there is one
+      // If there isn't a profile create a new profile
+      let profileQuery = {author:req.user._id};
+      Profile.findOne(profileQuery, function(err, profile){
+        if(err){
+          return next(err);
+        //There is a profile 
+        } else if(profile){
+          let profile = {};
+          profile.phone = req.body.phone;
+          profile.position = req.body.position;
+          profile.profileImageName = '/uploads/' + req.file.filename;
+          Profile.update(profileQuery, profile, function(err){
+            if(err){
+              return next(err);
+            } else{
+              req.flash('success', 'Your profile has beeupdated!');
+              return res.redirect('/profile');
+            }
+          });
+        // There is not a profile, so create a profile
+        } else{
+          let profileNew = new Profile();
+          profileNew.phone = req.body.phone;
+          profileNew.position = req.body.position;
+          profileNew.profileImageName = '/uploads/' + req.file.filename;
+          profileNew.author = req.user._id;
+          profileNew.save(function(err){
+            if(err){
+              return next(err);
+            } else{
+              req.flash('success', 'Your profile has beeupdated!');
+              return res.redirect('/profile');
+            }
+          });
+        }
+      });
     }
   });
-});
+});        
 
 // GET /News
 router.get('/news', authentication.mustBeLoggedIn, function(req, res, next){

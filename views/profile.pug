@@ -6,8 +6,11 @@ block content
     .profileHead
       h4.profileHeading #{name}
     .avatarImg
-      if profile.profileImageName
-        img.avatar(src=profile.profileImageName, alt='avatar')
+      if profile
+        if profile.profileImageName
+          img.avatar(src=profile.profileImageName, alt='avatar')
+        else
+          img.avatar(src='/images/avatar.png', alt='avatar')
       else
         img.avatar(src='/images/avatar.png', alt='avatar')
     if user
@@ -28,5 +31,3 @@ block content
           h6.mainContent=profile.position
     .profileEdit
       a.btn.btn-primary.profileBtn(href='/profile/edit') Edit Profile
-    .profileEdit
-      a.btn.btn-primary.profileBtn(href='/profile/edit/image') Edit Profile Image

@@ -5,25 +5,34 @@ block content
     if errors
         each error, i in errors
           .alert.alert-danger.messageCont #{error.msg}
+    if uploaderrors
+      .alert.alert-danger.messageCont #{uploaderrors}
     .mainHeading
       h2 #{title}
-    form(method='POST', action='/profile/edit')
+    form(method='POST', action='/profile/edit', enctype="multipart/form-data")
       #form-group
         label New email (this will change your login name as well!):
         input.form-control(name='email', type='text', value=user.email)
       #form-group
         label Phone:
-        if profile != null
-          if profile.phone !== undefined
+        if profile
+          if profile.phone
             input.form-control(name='phone', type='text', value=profile.phone)
           else
             input.form-control(name='phone', type='text')
+        else
+          input.form-control(name='phone', type='text')
       #form-group
         label Position:
-        if profile != null
-          if profile.position !== undefined
+        if profile
+          if profile.position
             input.form-control(name='position', type='text', value=profile.position)
           else
             input.form-control(name='position', type='text')
+        else
+          input.form-control(name='position', type='text')
+      #form-group
+        label Edit Profile Image:
+        input.form-control(name='profileImage', type='file')
       input.btn.btn-primary(type='submit', value='Submit')
       a.btn.btn-danger.cncl(href='/profile') Cancel
