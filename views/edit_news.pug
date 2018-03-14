@@ -7,12 +7,15 @@ block content
           .alert.alert-danger.messageCont #{error.msg}
     .mainHeading
       h2 #{title}
-    form(method='POST', action='/news/edit/'+article._id)
+    form(method='POST', action='/news/edit/'+article._id, enctype='multipart/form-data')
       #form-group
         label Title:
         input.form-control(name='title', type='text', value=article.title)
       #form-group
         label Body:
         textarea.form-control(name='body')= article.body
+      #form-group
+        label Image (optional):
+        input.form-control(name='articleImage', type='file')
       input.btn.btn-primary(type='submit', value='Submit')
       a.btn.btn-danger.cncl(href='/news') Cancel

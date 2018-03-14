@@ -7,7 +7,7 @@ block content
         .alert.alert-danger.messageCont #{error.msg}
     .mainHeading
       h2 #{title}
-    form(method='POST', action='/news/add')
+    form(method='POST', action='/news/add', enctype='multipart/form-data')
       #form-group
         label Title:
         if article
@@ -20,4 +20,7 @@ block content
           textarea.form-control(name='body')= article.body
         else
           textarea.form-control(name='body')
+      #form-group
+        label Image (optional):
+        input.form-control(name='articleImage', type='file')
       input.btn.btn-primary(type='submit', value='Submit')

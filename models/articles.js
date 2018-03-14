@@ -19,6 +19,9 @@ let articleSchema = mongoose.Schema({
   timestamp:{
     type: String,
     required: true
+  },
+  articleImage:{
+    type: String
   }
 });
 

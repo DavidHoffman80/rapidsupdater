@@ -166,6 +166,11 @@ form{
   margin-top: .5rem;
 }
 
+.uploadedImage{
+  width: 100%;
+  max-width: 450px;
+}
+
 .authorAvatar{
   width: 45px;
   height: 45px;

@@ -9,14 +9,17 @@ block content
       h6= article.timestamp
     .mainInfo
       p.mainContent= article.body
+    if article.articleImage
+      .articleImage
+        img.uploadedImage(src=article.articleImage, alt='Uploaded Image')
     .author.mainContent
-      if profile != mull
+      if profile
         if profile.profileImageName !== undefined
-          img.authorAvatar(src=profile.profileImageName, alt='avatar')
+          img.authorAvatar(src=profile.profileImageName, alt='Avatar')
         else
-          img.authorAvatar(src='/images/avatar.png', alt='avatar')
+          img.authorAvatar(src='/images/avatar.png', alt='Avatar')
       else
-        img.authorAvatar(src='/images/avatar.png', alt='avatar')
+        img.authorAvatar(src='/images/avatar.png', alt='Avatar')
       h5 #{author}
     if user.id == article.author
       .buttonCont
